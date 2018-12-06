@@ -1,6 +1,0 @@
-- hosts: gitlab-runner
-  vars_files:
-    - vars/runner.yaml
-  roles:
-    - { role: gitlab-runner }
-
