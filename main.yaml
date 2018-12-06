@@ -54,14 +54,10 @@
   vars_files:
     - vars/runner.yaml
   pre_tasks:
-    # - name: create certs dir
-    #   file:
-    #     path: /etc/gitlab-runner/certs/
-    #     state: directory
-    #   tags: ['gitlab-runner']
-    # - name: place gitlab crt
-    #   shell: openssl s_client -connect gitlab:443 -showcerts </dev/null 2>/dev/null |sed -e '/-----BEGIN/,/-----END/!d' > /tmp/aaa
-    #   tags: ['gitlab-runner']
+    - name: apt update
+      apt:
+        update_cache: yes
+      tags: ['gitlab-runner']
   roles:
     - role: gitlab-runner
       tags: ['gitlab-runner']
