@@ -1,0 +1,10 @@
+# ---
+# General config.
+gitlab_external_url: "http://gitlab/"
+gitlab_git_data_dir: "/var/opt/gitlab/git-data"
+gitlab_edition: "gitlab-ce"
+gitlab_version: '11.5.1-ce.0'
+
+gitlab_time_zone: "UTC"
+gitlab_backup_keep_time: "604800"
+gitlab_default_theme: '2'

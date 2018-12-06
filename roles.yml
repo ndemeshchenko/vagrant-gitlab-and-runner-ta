@@ -1,0 +1,12 @@
+---
+# file: roles.yml
+
+- src: https://github.com/geerlingguy/ansible-role-gitlab
+  version: master
+  name: geerlingguy.gitlab
+- src: https://github.com/solval/ansible-role-gitlab_runner
+  version: master
+  name: gitlab-runner-role
+
+
+

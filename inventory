@@ -1,0 +1,6 @@
+[gitlab-server]
+gitlab
+
+[gitlab-runner]
+gitlab-runner
+

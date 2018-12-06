@@ -1,0 +1,7 @@
+---
+gitlab_runner_list:
+  - description: runner-1
+    url: http://gitlab
+    executor: shell
+    registration-token: "{{ hostvars['gitlab']['runner_token']['stdout'] }}"
+    tag-list: deploy,review-apps,nginx

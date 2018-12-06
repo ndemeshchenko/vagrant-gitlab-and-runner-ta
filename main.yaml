@@ -1,0 +1,72 @@
+---
+- hosts: gitlab-server
+  vars:
+    gitlab_import_location_path: /var/opt/gitlab/git-data/repository-import-001
+    gitlab_test_repo_name: review-apps-nginx.git
+    gitlab_test_repo_group_url: https://gitlab.com/gitlab-examples
+  vars_files:
+    - vars/server.yaml
+  roles:
+    - role: geerlingguy.gitlab
+      tags: ['gitlab-server']
+  tasks:
+    - name: register runner token
+      shell: gitlab-rails runner -e production "puts Gitlab::CurrentSettings.current_application_settings.runners_registration_token"
+      become: true
+      register: runner_token
+      tags: ['gitlab-runner']
+    - name: gitlab import folder exists
+      file: 
+        path: "{{gitlab_import_location_path}}"
+        state: directory
+      tags: ['gitlab-import']
+    - name: git client installed
+      package: 
+        name: git
+        state: latest
+      tags: ['gitlab-import']
+    - name: stat import repo
+      stat:
+        path: "{{gitlab_import_location_path}}/{{gitlab_test_repo_name}}"
+      register: imported_repo
+      tags: ['gitlab-import']
+    - name: clone repo
+      shell: "git clone --mirror {{gitlab_test_repo_group_url}}/review-apps-nginx.git {{gitlab_import_location_path}}/{{gitlab_test_repo_name}}"
+      become: true
+      when: imported_repo.stat.exists == False
+      tags: ['gitlab-import']
+    - name: 
+      file:
+        path: "{{gitlab_import_location_path}}"
+        state: directory
+        owner: git
+      tags: ['gitlab-import']
+    - name: import to gitlab
+      shell: "gitlab-rake gitlab:import:repos['{{gitlab_import_location_path}}']"
+      become: true
+      tags: ['gitlab-import']
+
+    # - name: print token
+    #   debug:
+    #     msg: "token: {{runner_token}}"
+
+- hosts: gitlab-runner
+  vars_files:
+    - vars/runner.yaml
+  pre_tasks:
+    # - name: create certs dir
+    #   file:
+    #     path: /etc/gitlab-runner/certs/
+    #     state: directory
+    #   tags: ['gitlab-runner']
+    # - name: place gitlab crt
+    #   shell: openssl s_client -connect gitlab:443 -showcerts </dev/null 2>/dev/null |sed -e '/-----BEGIN/,/-----END/!d' > /tmp/aaa
+    #   tags: ['gitlab-runner']
+  roles:
+    - role: gitlab-runner
+      tags: ['gitlab-runner']
+
+
+# registration_token=gitlab-rails runner -e production "puts Gitlab::CurrentSettings.current_application_settings.runners_registration_token"
+
+# gitlab-runner register --non-interactive --url=https://gitlab --registration-token=udBq9Dk5A5y3LNoFqMRK --description=runner-1
