@@ -12,7 +12,11 @@ ansible-galaxy install -r roles.yml
 
 ```shell
 vagrant up
+
+# add vagrant hosts to your ssh config for ansible to be able to contact them
+vagrant ssh >> ~/.ssh/config
 ```
+
 
 ## Run ansible
 
